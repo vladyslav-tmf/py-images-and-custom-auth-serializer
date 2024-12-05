@@ -128,7 +128,9 @@ class MovieSessionDetailSerializer(MovieSessionBaseSerializer):
 
 
 class OrderBaseSerializer(serializers.ModelSerializer):
-    tickets = TicketBaseSerializer(many=True, read_only=False, allow_empty=False)
+    tickets = TicketBaseSerializer(
+        many=True, read_only=False, allow_empty=False
+    )
 
     class Meta:
         model = Order
