@@ -22,14 +22,15 @@ from cinema.serializers import (
     ActorSerializer,
     CinemaHallSerializer,
     GenreSerializer,
+    MovieBaseSerializer,
     MovieDetailSerializer,
-    MovieImageSerializer, MovieListSerializer,
-    MovieSerializer,
+    MovieImageSerializer,
+    MovieListSerializer,
+    MovieSessionBaseSerializer,
     MovieSessionDetailSerializer,
     MovieSessionListSerializer,
-    MovieSessionSerializer,
+    OrderBaseSerializer,
     OrderListSerializer,
-    OrderSerializer,
 )
 
 
@@ -72,7 +73,7 @@ class MovieViewSet(
     GenericViewSet,
 ):
     queryset = Movie.objects.prefetch_related("genres", "actors")
-    serializer_class = MovieSerializer
+    serializer_class = MovieBaseSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
@@ -109,7 +110,7 @@ class MovieViewSet(
         if self.action == "retrieve":
             return MovieDetailSerializer
 
-        return MovieSerializer
+        return MovieBaseSerializer
 
     @action(
         methods=["POST"],
@@ -140,7 +141,7 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
             )
         )
     )
-    serializer_class = MovieSessionSerializer
+    serializer_class = MovieSessionBaseSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
@@ -166,7 +167,7 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
         if self.action == "retrieve":
             return MovieSessionDetailSerializer
 
-        return MovieSessionSerializer
+        return MovieSessionBaseSerializer
 
 
 class OrderPagination(PageNumberPagination):
@@ -182,7 +183,7 @@ class OrderViewSet(
     queryset = Order.objects.prefetch_related(
         "tickets__movie_session__movie", "tickets__movie_session__cinema_hall"
     )
-    serializer_class = OrderSerializer
+    serializer_class = OrderBaseSerializer
     pagination_class = OrderPagination
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -194,7 +195,7 @@ class OrderViewSet(
         if self.action == "list":
             return OrderListSerializer
 
-        return OrderSerializer
+        return OrderBaseSerializer
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
