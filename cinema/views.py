@@ -1,28 +1,33 @@
 from datetime import datetime
 
-from django.db.models import F, Count
-from rest_framework import viewsets, mixins
+from cinema.models import (
+    Actor,
+    CinemaHall,
+    Genre,
+    Movie,
+    MovieSession,
+    Order,
+)
+from cinema.permissions import IsAdminOrIfAuthenticatedReadOnly
+from cinema.serializers import (
+    ActorSerializer,
+    CinemaHallSerializer,
+    GenreSerializer,
+    MovieDetailSerializer,
+    MovieListSerializer,
+    MovieSerializer,
+    MovieSessionDetailSerializer,
+    MovieSessionListSerializer,
+    MovieSessionSerializer,
+    OrderListSerializer,
+    OrderSerializer,
+)
+from django.db.models import Count, F
+from rest_framework import mixins, viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet
-
-from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
-from cinema.permissions import IsAdminOrIfAuthenticatedReadOnly
-
-from cinema.serializers import (
-    GenreSerializer,
-    ActorSerializer,
-    CinemaHallSerializer,
-    MovieSerializer,
-    MovieSessionSerializer,
-    MovieSessionListSerializer,
-    MovieDetailSerializer,
-    MovieSessionDetailSerializer,
-    MovieListSerializer,
-    OrderSerializer,
-    OrderListSerializer,
-)
 
 
 class GenreViewSet(

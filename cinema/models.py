@@ -1,6 +1,6 @@
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.conf import settings
 
 
 class CinemaHall(models.Model):
@@ -28,7 +28,7 @@ class Actor(models.Model):
     last_name = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.first_name + " " + self.last_name
+        return self.full_name
 
     @property
     def full_name(self):
@@ -39,8 +39,8 @@ class Movie(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     duration = models.IntegerField()
-    genres = models.ManyToManyField(Genre)
-    actors = models.ManyToManyField(Actor)
+    genres = models.ManyToManyField(Genre, related_name="movies")
+    actors = models.ManyToManyField(Actor, related_name="movies")
 
     class Meta:
         ordering = ["title"]
@@ -51,20 +51,24 @@ class Movie(models.Model):
 
 class MovieSession(models.Model):
     show_time = models.DateTimeField()
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    cinema_hall = models.ForeignKey(CinemaHall, on_delete=models.CASCADE)
+    movie = models.ForeignKey(
+        Movie, on_delete=models.CASCADE, related_name="sessions"
+    )
+    cinema_hall = models.ForeignKey(
+        CinemaHall, on_delete=models.CASCADE, related_name="sessions"
+    )
 
     class Meta:
         ordering = ["-show_time"]
 
     def __str__(self):
-        return self.movie.title + " " + str(self.show_time)
+        return f"{self.movie.title} {str(self.show_time)}"
 
 
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="orders"
     )
 
     def __str__(self):
@@ -95,7 +99,7 @@ class Ticket(models.Model):
                 raise error_to_raise(
                     {
                         ticket_attr_name: f"{ticket_attr_name} "
-                        f"number must be in available range: "
+                        "number must be in available range: "
                         f"(1, {cinema_hall_attr_name}): "
                         f"(1, {count_attrs})"
                     }
