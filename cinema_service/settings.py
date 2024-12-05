@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "debug_toolbar",
-    
+
     # User apps
     "cinema",
     "user",
