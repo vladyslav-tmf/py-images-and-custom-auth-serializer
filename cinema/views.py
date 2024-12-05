@@ -1,5 +1,12 @@
 from datetime import datetime
 
+from django.db.models import Count, F
+from rest_framework import mixins, viewsets
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet
+
 from cinema.models import (
     Actor,
     CinemaHall,
@@ -22,12 +29,6 @@ from cinema.serializers import (
     OrderListSerializer,
     OrderSerializer,
 )
-from django.db.models import Count, F
-from rest_framework import mixins, viewsets
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet
 
 
 class GenreViewSet(
