@@ -6,6 +6,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet
 
@@ -78,9 +79,9 @@ class MovieViewSet(
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     @staticmethod
-    def _params_to_ints(qs):
+    def _params_to_ints(query_string: str) -> list[int]:
         """Converts a list of string IDs to a list of integers"""
-        return [int(str_id) for str_id in qs.split(",")]
+        return [int(str_id) for str_id in query_string.split(",")]
 
     def get_queryset(self):
         """Retrieve the movies with filters"""
@@ -118,7 +119,7 @@ class MovieViewSet(
         url_path="upload-image",
         permission_classes=[IsAdminOrIfAuthenticatedReadOnly],
     )
-    def upload_image(self, request, pk=None):
+    def upload_image(self, request: Request, pk: int = None) -> Response:
         """Endpoint to upload image to specific movie"""
         movie = self.get_object()
         serializer = MovieImageSerializer(movie, data=request.data)
@@ -132,7 +133,7 @@ class MovieViewSet(
 
 class MovieSessionViewSet(viewsets.ModelViewSet):
     queryset = (
-        MovieSession.objects.all()
+        MovieSession.objects
         .select_related("movie", "cinema_hall")
         .annotate(
             tickets_available=(

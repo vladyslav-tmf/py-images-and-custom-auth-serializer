@@ -1,6 +1,8 @@
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework import serializers
 
+from user.models import User
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,11 +17,11 @@ class UserSerializer(serializers.ModelSerializer):
             }
         }
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict) -> User:
         """Create a new user with encrypted password and return it"""
         return get_user_model().objects.create_user(**validated_data)
 
-    def update(self, instance, validated_data):
+    def update(self, instance: User, validated_data: dict) -> User:
         """Update a user, set the password correctly and return it"""
         password = validated_data.pop("password", None)
         user = super().update(instance, validated_data)
@@ -45,7 +47,7 @@ class AuthTokenSerializer(serializers.Serializer):
         read_only=True,
     )
 
-    def validate(self, attrs):
+    def validate(self, attrs: dict) -> dict:
         email = attrs.get("email")
         password = attrs.get("password")
 

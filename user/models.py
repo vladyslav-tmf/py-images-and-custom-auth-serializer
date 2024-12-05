@@ -5,7 +5,9 @@ from django.db import models
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
-    def _create_user(self, email, password, **extra_fields):
+    def _create_user(
+        self, email: str, password: str, **extra_fields: dict
+    ) -> "User":
         """Create and save a User model with no username field"""
         if not email:
             raise ValueError("The given email must be set")
@@ -15,13 +17,17 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_user(self, email, password=None, **extra_fields):
+    def create_user(
+        self, email: str, password: str | None = None, **extra_fields: dict
+    ) -> "User":
         """Create and save a regular User with the given email and password"""
         extra_fields.setdefault("is_staff", False)
         extra_fields.setdefault("is_superuser", False)
         return self._create_user(email, password, **extra_fields)
 
-    def create_superuser(self, email, password, **extra_fields):
+    def create_superuser(
+        self, email: str, password: str, **extra_fields: dict
+    ) -> "User":
         """Create and save a SuperUser with the given email and password"""
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
@@ -43,5 +49,5 @@ class User(AbstractUser):
 
     objects = UserManager()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.email
